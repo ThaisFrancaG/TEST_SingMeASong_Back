@@ -4,13 +4,14 @@ import supertest from "supertest";
 import { toChangeScore } from "../factories/createFunctions.js";
 
 describe("POST /recommendations insert", () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await prisma.$executeRaw`TRUNCATE TABLE recommendations;`;
   });
   afterAll(async () => {
     await prisma.$disconnect();
   });
   it("When sent unvalid data format, should return code 422 and not go further the code implementations. There shall be no new items on the db", async () => {
+    console.log(`The connection URL is ${process.env.DATABASE_URL}`);
     const data = {};
     const newRecommendation = await supertest(app)
       .post("/recommendations")
