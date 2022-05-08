@@ -1,7 +1,11 @@
 import app from "../../src/app.js";
 import { prisma } from "../../src/database.js";
 import supertest from "supertest";
-import { badScore, toChangeScore } from "../factories/createFunctions.js";
+import {
+  badScore,
+  multipleEntries,
+  toChangeScore,
+} from "../factories/createFunctions.js";
 
 describe("POST /recommendations insert", () => {
   beforeAll(async () => {
@@ -99,5 +103,32 @@ describe("POST /recommendations/:id/downvote", () => {
       where: { id: id },
     });
     expect(checkDeletion).toBe(null);
+  });
+});
+
+describe("GET /recommendations/?:id", () => {
+  beforeAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE recommendations;`;
+    await multipleEntries();
+  });
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("Should send nothing but the request and receive a list of objects of maximun length 10 and status code 200", async () => {
+    const recommendationsList = await supertest(app).get(`/recommendations/`);
+    expect(recommendationsList.status).toBe(200);
+    expect(recommendationsList.body.length).toBeLessThanOrEqual(10);
+  });
+  it("Should send an valid id on the requirements and receive one recommendation and status code 200", async () => {
+    const recommendationItem = await prisma.recommendation.findFirst();
+
+    const id = recommendationItem.id;
+    const recommendationById = await supertest(app).get(
+      `/recommendations/${id}`
+    );
+
+    expect(recommendationById.body).not.toBeNull();
+    expect(recommendationById.status).toBe(200);
   });
 });
