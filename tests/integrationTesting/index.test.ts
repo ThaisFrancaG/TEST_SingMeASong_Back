@@ -1,7 +1,7 @@
 import app from "../../src/app.js";
 import { prisma } from "../../src/database.js";
 import supertest from "supertest";
-import { toChangeScore } from "../factories/createFunctions.js";
+import { badScore, toChangeScore } from "../factories/createFunctions.js";
 
 describe("POST /recommendations insert", () => {
   beforeAll(async () => {
@@ -11,7 +11,6 @@ describe("POST /recommendations insert", () => {
     await prisma.$disconnect();
   });
   it("When sent unvalid data format, should return code 422 and not go further the code implementations. There shall be no new items on the db", async () => {
-    console.log(`The connection URL is ${process.env.DATABASE_URL}`);
     const data = {};
     const newRecommendation = await supertest(app)
       .post("/recommendations")
@@ -66,6 +65,7 @@ describe("POST /recommendations/:id/upvote", () => {
 describe("POST /recommendations/:id/downvote", () => {
   beforeAll(async () => {
     await toChangeScore();
+    await badScore();
   });
   afterAll(async () => {
     await prisma.$disconnect();
@@ -79,14 +79,25 @@ describe("POST /recommendations/:id/downvote", () => {
     const previousScore = await prisma.recommendation.findFirst({
       where: { id: id },
     });
-    const newUpvote = await supertest(app).post(
+    const newDownvote = await supertest(app).post(
       `/recommendations/${id}/downvote`
     );
     const currentScore = await prisma.recommendation.findFirst({
       where: { id: id },
     });
 
-    expect(newUpvote.status).toBe(200);
+    expect(newDownvote.status).toBe(200);
     expect(previousScore.score - currentScore.score).toBe(1);
+  });
+  it("Should give a final downvote to a recommendation, which should be deleted", async () => {
+    const reference = await prisma.recommendation.findFirst({
+      where: { name: "Mama Hun" },
+    });
+    const id = reference.id;
+    await supertest(app).post(`/recommendations/${id}/downvote`);
+    const checkDeletion = await prisma.recommendation.findFirst({
+      where: { id: id },
+    });
+    expect(checkDeletion).toBe(null);
   });
 });

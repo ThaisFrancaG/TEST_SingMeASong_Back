@@ -11,4 +11,15 @@ async function toChangeScore() {
   });
 }
 
-export { toChangeScore };
+async function badScore() {
+  await prisma.recommendation.upsert({
+    where: { name: "Mama Hun" },
+    update: {},
+    create: {
+      name: "Mama Hun",
+      youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+      score: -5,
+    },
+  });
+}
+export { toChangeScore, badScore };
