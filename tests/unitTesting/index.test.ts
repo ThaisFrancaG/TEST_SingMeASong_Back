@@ -27,8 +27,6 @@ describe("recommendationService for insert", () => {
 
 describe("recommendationService for finding id", () => {
   it("Should throw an error for an inmvalid Id to be searched", async () => {
-    console.log(`The connection URL is ${process.env.DATABASE_URL}`);
-
     jest.spyOn(recommendationRepository, "find").mockResolvedValue(null);
 
     expect(recommendationService.upvote(1)).rejects.toEqual(notFoundError());
@@ -55,5 +53,19 @@ describe("recommendationService call to delete recommendation", () => {
     await recommendationService.downvote(1);
 
     expect(recommendationRepository.remove).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("recommendationService call to get", () => {
+  it("Should return an error for looking for an Id that does not exists", () => {
+    jest.spyOn(recommendationRepository, "find").mockResolvedValue(null);
+    expect(recommendationService.getById(1)).rejects.toEqual(notFoundError());
+  });
+});
+
+describe("recommendationService to get random", () => {
+  it("Should return error code if there are no recommendations at all", () => {
+    jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
+    expect(recommendationService.getRandom).rejects.toEqual(notFoundError());
   });
 });

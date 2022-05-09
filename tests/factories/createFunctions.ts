@@ -29,42 +29,52 @@ async function multipleEntries() {
       {
         name: "Video 1",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: 100,
       },
       {
         name: "Video 2",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: 20,
       },
       {
         name: "Video 3",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: 10,
       },
       {
         name: "Video 4",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: 5,
       },
       {
         name: "Video 5",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: 1,
       },
       {
         name: "Video 6",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: -1,
       },
       {
         name: "Video 7",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: -2,
       },
       {
         name: "Video 8",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: -3,
       },
       {
         name: "Video 9",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: -4,
       },
       {
         name: "Video 10",
         youtubeLink: "https://www.youtube.com/watch?v=zVGmt7GsUW4",
+        score: -5,
       },
       {
         name: "Video 11",

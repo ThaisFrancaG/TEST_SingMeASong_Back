@@ -131,4 +131,32 @@ describe("GET /recommendations/?:id", () => {
     expect(recommendationById.body).not.toBeNull();
     expect(recommendationById.status).toBe(200);
   });
+  it("Should have a valid response format after a call", async () => {
+    const recommendationItem = await prisma.recommendation.findFirst();
+    const id = recommendationItem.id;
+    const recommendationById = await supertest(app).get(
+      `/recommendations/${id}`
+    );
+    expect(recommendationById.body.id).not.toBeNull();
+    expect(recommendationById.body.name).not.toBeNull();
+    expect(recommendationById.body.youtubeLink).not.toBeNull();
+    expect(recommendationById.body.score).not.toBeNull();
+  });
+});
+
+describe("GET /recomendations/random", () => {
+  beforeAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE recommendations;`;
+    await multipleEntries();
+  });
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("Should receive a random song recommendation without giving anything", async () => {
+    const randomRec = await supertest(app).get("/recommendations/random");
+    console.log(randomRec.body);
+    expect(randomRec.body).not.toBeNull();
+    expect(randomRec.body.length).toBeUndefined();
+  });
 });
